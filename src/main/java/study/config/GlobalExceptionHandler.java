@@ -9,8 +9,12 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import jakarta.servlet.http.HttpServletRequest;
+
+
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -44,6 +48,22 @@ public class GlobalExceptionHandler {
     public String handleUnexpectedException(Exception e, Model model) {
         model.addAttribute("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
         model.addAttribute("message", "サーバー内部でエラーが発生しました");
+        return "error";
+    }
+
+    // SpringがラップしたDBエラー（共通親クラス）
+    @ExceptionHandler(DataAccessException.class)
+    public String handleDatabaseError(DataAccessException e, Model model) {
+        model.addAttribute("status", 500);
+        model.addAttribute("message", "データベースエラーが発生しました");
+        return "error";
+    }
+
+    // 特定の制約違反（ユニーク制約など）を個別に扱うことも可能
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public String handleConstraintError(DataIntegrityViolationException e, Model model) {
+        model.addAttribute("status", 400);
+        model.addAttribute("message", "入力値が一意制約に違反しています");
         return "error";
     }
 }
