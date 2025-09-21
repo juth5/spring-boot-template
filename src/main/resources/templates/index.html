@@ -7,5 +7,24 @@
 <body>
     <div>トップページです</div>
     <a th:href="@{/hello}">helloページ</a>
+    <button id="btn">button</button>
 </body>
+<script>
+    let btnElement = {};
+    document.addEventListener("DOMContentLoaded", function() {
+        btnElement = document.getElementById("btn");
+        btnElement.addEventListener('click', () => {
+            getHelloData();
+        });
+    });
+
+    let getHelloData = async () => {
+        let res = await fetch('/api/hello', {
+            method: 'GET',
+        });
+        let data = await res.text();
+        console.log(data);
+    };
+
+</script>
 </html>

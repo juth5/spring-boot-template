@@ -7,9 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,9 +23,17 @@ public class GlobalExceptionHandler {
         return "error";
     }
 
-    // 404系: ページが存在しない
+    // 404系: ページが存在しない (API/ページを1つのメソッドで振り分け)
     @ExceptionHandler(NoHandlerFoundException.class)
-    public String handleNotFound(NoHandlerFoundException e, Model model) {
+    public Object handleNotFound(NoHandlerFoundException e, HttpServletRequest request, Model model) {
+        if (request.getRequestURI().startsWith("/api/")) {
+            // API用: JSON 404
+            Map<String, String> body = new HashMap<>();
+            body.put("error", "Not Found");
+            body.put("message", "APIリソースが見つかりません");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+        }
+        // 通常ページ用
         model.addAttribute("status", HttpStatus.NOT_FOUND.value());
         model.addAttribute("message", "ページが見つかりません");
         return "error";
@@ -40,25 +46,4 @@ public class GlobalExceptionHandler {
         model.addAttribute("message", "サーバー内部でエラーが発生しました");
         return "error";
     }
-
-
-
-
-    // API用の例外ハンドリング
-    // 400系: 不正リクエスト
-    @ExceptionHandler(NoHandlerFoundException.class)
-    public Object handleNotFound(NoHandlerFoundException e, HttpServletRequest request, Model model) {
-        if (request.getRequestURI().startsWith("/api/")) {
-            // API用レスポンス
-            Map<String, String> body = new HashMap<>();
-            body.put("error", "Not Found");
-            body.put("message", "APIリソースが見つかりません");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
-        }
-        // ページ用レスポンス
-        model.addAttribute("status", 404);
-        model.addAttribute("message", "ページが見つかりません");
-        return "error";
-    }
-
 }
