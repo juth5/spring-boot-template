@@ -24,17 +24,28 @@ repositories {
 }
 
 dependencies {
+	// --- Web & View ---
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// --- DB関連 ---
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 	runtimeOnly 'org.postgresql:postgresql'
+
+	// --- バリデーション ---
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// --- 開発支援 ---
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// --- Lombok ---
+	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// --- テスト ---
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	implementation 'org.springframework.boot:spring-boot-starter-jdbc' // ★ DBアクセスに必要
-  implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3' // ★ MyBatisスターター
-	implementation 'org.springframework.boot:spring-boot-starter-validation' // ★ バリデーション
 }
 
 tasks.named('test') {
