@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="study.mapper.ApiCallLogMapper">
+  <select id="findAll" resultType="study.model.ApiCallLog">
+    SELECT id, call_date, created_at
+    FROM sample1.api_call_log
+    ORDER BY id ASC
+  </select>
+</mapper>

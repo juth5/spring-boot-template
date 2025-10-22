@@ -24,3 +24,6 @@ Thumbs.db
 .project
 .settings/
 bin/
+
+### Environment ###
+.env
