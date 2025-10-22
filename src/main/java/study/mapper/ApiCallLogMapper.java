@@ -9,4 +9,7 @@ import study.model.ApiCallLog;
 public interface ApiCallLogMapper {
     // すべてのログを取得
     List<ApiCallLog> findAll();
+
+    // IDでログを取得
+    ApiCallLog findById(Long id);
 }

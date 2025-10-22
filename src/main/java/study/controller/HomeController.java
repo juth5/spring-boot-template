@@ -16,7 +16,8 @@ public class HomeController {
 	@GetMapping("/")
 	public String home() {
 		List<ApiCallLog> logs = apiCallLogMapper.findAll();
-		System.out.println(logs);
+		ApiCallLog log = apiCallLogMapper.findById(4L);
+
 		return "index";
 	}
 }

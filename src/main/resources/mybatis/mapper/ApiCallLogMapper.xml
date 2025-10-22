@@ -9,4 +9,13 @@
     FROM sample1.api_call_log
     ORDER BY id ASC
   </select>
+
+  <select id="findById" parameterType="long" resultType="study.model.ApiCallLog">
+    SELECT id, call_date, created_at
+    FROM sample1.api_call_log
+    WHERE id = #{id}
+  </select>
+
+
+
 </mapper>
