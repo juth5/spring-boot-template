@@ -17,6 +17,12 @@ public class HomeController {
 	public String home() {
 		List<ApiCallLog> logs = apiCallLogMapper.findAll();
 		ApiCallLog log = apiCallLogMapper.findById(4L);
+		Integer count = apiCallLogMapper.countToday();
+
+
+
+
+
 
 		return "index";
 	}

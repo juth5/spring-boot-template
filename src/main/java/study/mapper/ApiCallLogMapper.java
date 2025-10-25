@@ -12,4 +12,7 @@ public interface ApiCallLogMapper {
 
     // IDでログを取得
     ApiCallLog findById(Long id);
+
+    // 今日の日付の件数をカウント
+    Integer countToday();
 }

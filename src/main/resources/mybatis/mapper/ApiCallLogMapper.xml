@@ -16,6 +16,13 @@
     WHERE id = #{id}
   </select>
 
+    <!-- 今日の日付の件数をカウント -->
+  <select id="countToday" resultType="int">
+    SELECT COUNT(*)
+    FROM sample1.api_call_log
+    WHERE call_date = CURRENT_DATE
+  </select>
+
 
 
 </mapper>

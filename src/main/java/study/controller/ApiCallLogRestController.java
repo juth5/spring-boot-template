@@ -1,5 +1,4 @@
 package study.controller;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import study.mapper.ApiCallLogMapper;
@@ -25,6 +24,14 @@ public class ApiCallLogRestController {
     public ApiCallLog findById(@PathVariable("id") Long id) {
         return apiCallLogMapper.findById(id);
     }
+
+    // 今日の呼び出し回数を取得
+    @GetMapping("/count/today")
+    public Integer countToday() {
+        return apiCallLogMapper.countToday();
+    }
+
+    
 
     // 新規登録（POST /api/calllogs）
     // @PostMapping
