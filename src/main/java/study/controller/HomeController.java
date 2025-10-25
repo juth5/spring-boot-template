@@ -11,19 +11,14 @@ import study.model.ApiCallLog;
 
 @Controller
 public class HomeController {
-	@Autowired ApiCallLogMapper apiCallLogMapper;
+	@Autowired 
+	ApiCallLogMapper apiCallLogMapper;
 
 	@GetMapping("/")
 	public String home() {
 		List<ApiCallLog> logs = apiCallLogMapper.findAll();
 		ApiCallLog log = apiCallLogMapper.findById(4L);
 		Integer count = apiCallLogMapper.countToday();
-
-
-
-
-
-
 		return "index";
 	}
 }
