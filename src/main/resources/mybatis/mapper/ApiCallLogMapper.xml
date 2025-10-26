@@ -4,24 +4,31 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="study.mapper.ApiCallLogMapper">
+  <!-- レコード全件取得 -->
   <select id="findAll" resultType="study.model.ApiCallLog">
     SELECT id, call_date, created_at
     FROM sample1.api_call_log
     ORDER BY id ASC
   </select>
 
+  <!-- idによる単体取得 -->
   <select id="findById" parameterType="long" resultType="study.model.ApiCallLog">
     SELECT id, call_date, created_at
     FROM sample1.api_call_log
     WHERE id = #{id}
   </select>
 
-    <!-- 今日の日付の件数をカウント -->
+  <!-- 今日の日付の件数をカウント -->
   <select id="countToday" resultType="int">
     SELECT COUNT(*)
     FROM sample1.api_call_log
     WHERE call_date = CURRENT_DATE
   </select>
+
+  <!-- レコードを1件追加 -->
+  <insert id="insertCallLog">
+    INSERT INTO sample1.api_call_log DEFAULT VALUES
+  </insert>
 
 
 

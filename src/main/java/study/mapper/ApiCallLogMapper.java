@@ -15,4 +15,7 @@ public interface ApiCallLogMapper {
 
     // 今日の日付の件数をカウント
     Integer countToday();
+
+    //レコードを1件追加
+    void insertCallLog();
 }
