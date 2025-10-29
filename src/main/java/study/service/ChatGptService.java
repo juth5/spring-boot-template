@@ -9,7 +9,6 @@ import study.mapper.ApiCallLogMapper;
 import study.model.ChatRequestParameter;
 import org.springframework.web.reactive.function.client.WebClient;
 
-
 @Service
 public class ChatGptService {
     private static final String API_URL = "https://api.openai.com/v1";

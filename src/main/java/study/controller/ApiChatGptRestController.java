@@ -1,23 +1,17 @@
 package study.controller;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import study.model.ChatRequestParameter;
 import study.model.ServiceResponse;
 import study.service.ChatGptService;
 
-
-
 @RestController
 @RequestMapping("/api/chatgpt")
 public class ApiChatGptRestController {
-
     @Autowired
     private ChatGptService chatGptService;
-
     @PostMapping
     public ServiceResponse<Map<String, String>> callChatGpt(@RequestBody ChatRequestParameter param) {
 
@@ -34,7 +28,6 @@ public class ApiChatGptRestController {
             serviceResponse.setMessage("回答を生成しました。");
             serviceResponse.setData(data);
         }
-
         return serviceResponse;
     }
 }
