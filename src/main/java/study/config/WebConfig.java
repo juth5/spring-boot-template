@@ -14,7 +14,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // すべてのAPIパスに適用
-                        .allowedOrigins("http://localhost:3000") // フロントURL
+                        .allowedOrigins("https://ai-110mh.vercel.app/") // フロントURL
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*") // ヘッダーも自由に
                         .allowCredentials(true); // Cookieなども許可する場合
