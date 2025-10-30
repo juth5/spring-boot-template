@@ -28,7 +28,7 @@ public class ChatGptService {
 
         Integer count = apiCallLogMapper.countToday();
 
-        if (count >= 1) {
+        if (count >= 10) {
             System.out.println("今日の呼び出し回数が上限に達しました。");
             return null;
         }
