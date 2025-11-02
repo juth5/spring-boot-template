@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="study.mapper.ApiEmbeddingMapper">
+
+  <!-- ベクトルを入れる -->
+  <insert id="insertEmbedding" parameterType="study.model.Embedding">
+    INSERT INTO sample1.embeddings (content, embedding)
+    VALUES (
+      #{content},
+      #{embedding, typeHandler=study.typehandler.VectorTypeHandler}
+    )
+  </insert>
+
+
+<!-- 類似検索 -->
+<select id="searchSimilar" resultType="study.model.Embedding">
+  SELECT
+    id,
+    content,
+    (embedding &lt;=&gt; #{queryVector, typeHandler=study.typehandler.VectorTypeHandler}) AS distance
+  FROM sample1.embeddings
+  ORDER BY embedding &lt;=&gt; #{queryVector, typeHandler=study.typehandler.VectorTypeHandler}
+  LIMIT #{limit}
+</select>
+
+
+
+
+</mapper>
+
+

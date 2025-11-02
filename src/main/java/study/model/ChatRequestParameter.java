@@ -11,4 +11,5 @@ public class ChatRequestParameter {
     private Long id;
     private String model;
     private String question;
+    private String referenceText;
 }
