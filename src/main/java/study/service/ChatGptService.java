@@ -91,20 +91,40 @@ public class ChatGptService {
                     .retrieve()
                     .bodyToMono(String.class)
                     .block(); // 同期的に待機（非同期にしたいなら block() を外す）
-        JSONObject data = new JSONObject(response);
-        // ✅ 新API用の正しいパース
-        JSONObject outputObj = data
-                .getJSONArray("output")
-                .getJSONObject(0);
 
-        JSONObject contentObj = outputObj
-                .getJSONArray("content")
-                .getJSONObject(0);
+            // --- Debug Log ---
+            System.out.println("===== RAW RESPONSE =====");
+            System.out.println(response);
+            System.out.println("========================");
 
-        String answer = contentObj.getString("text");
+            JSONObject data = new JSONObject(response);
 
-        return answer;
+            // --- Debug Log ---
+            System.out.println("===== data =====");
+            System.out.println(data);
+            System.out.println("========================");
 
+            JSONArray outputArray = data.getJSONArray("output");
+
+            JSONObject messageOutput = null;
+            for (int i = 0; i < outputArray.length(); i++) {
+                JSONObject output = outputArray.getJSONObject(i);
+                if ("message".equals(output.getString("type"))) {
+                    messageOutput = output;
+                    break;
+                }
+            }
+
+            if (messageOutput == null) {
+                throw new RuntimeException("レスポンスにmessageタイプが見つかりません");
+            }
+
+            JSONArray contentArray = messageOutput.getJSONArray("content");
+            JSONObject firstContent = contentArray.getJSONObject(0);
+
+            String answer = firstContent.getString("text");
+
+            return answer;
         } catch (Exception e) {
             e.printStackTrace();
             return "エラーが発生しました。";
