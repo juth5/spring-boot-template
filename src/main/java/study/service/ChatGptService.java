@@ -1,30 +1,25 @@
 package study.service;
 
-import java.util.Arrays;
-
+import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
-
 import study.mapper.ApiCallLogMapper;
 import study.mapper.ApiEmbeddingMapper;
 import study.model.ChatRequestParameter;
 import study.model.Embedding;
-
 import org.springframework.web.reactive.function.client.WebClient;
-
 import io.netty.resolver.DefaultAddressResolverGroup;
-
 import reactor.netty.http.client.HttpClient;
+
 @Service
 public class ChatGptService {
     private static final String API_URL = "https://api.openai.com/v1";
 
     @Value("${OPENAI_API_KEY}")
     private String apiKey;
-
     private final WebClient webClient;
     private final ApiCallLogMapper apiCallLogMapper;
     private final ApiEmbeddingMapper apiEmbeddingMapper;
@@ -51,7 +46,6 @@ public class ChatGptService {
             System.out.println("今日の呼び出し回数が上限に達しました。");
             return null;
         }
-
         //渡ってきた質問をベクターに変更する
         double[] vector = createEmbedding(param.getQuestion());
 
@@ -60,13 +54,23 @@ public class ChatGptService {
         // return null;
 
         //vectorをもとにDBにアクセスして類似のcontentを取得する
-        Embedding embedding = apiEmbeddingMapper.searchSimilar(vector, 1);
+        List<Embedding> embeddings = apiEmbeddingMapper.searchSimilar(vector, 3);
 
-        String templateText = "以下に示す内容だけを根拠に回答してください。内容に存在しない情報は推測せず、わからない場合は「データに記載がありません」と答えてください。";
-        String merged = templateText + "\n\n" + embedding.getContent();
+        double threshold = 0.5;
 
+        StringBuilder sb = new StringBuilder();
+        sb.append("【ユーザーの質問】\n");
+        sb.append(param.getQuestion()).append("\n\n");
+        sb.append("以下に示す内容だけを根拠に回答してください。内容に存在しない情報は推測せず、わからない場合は「データに記載がありません」と答えてください。\n\n");
+
+        for (Embedding e : embeddings) {
+            if (e.getDistance() <= threshold) {
+                sb.append(e.getContent()).append("\n\n");
+            }
+        }
+
+        String merged = sb.toString();
         param.setReferenceText(merged);
-
         String result = callApiChatGpt(param);
         apiCallLogMapper.insertCallLog();
 

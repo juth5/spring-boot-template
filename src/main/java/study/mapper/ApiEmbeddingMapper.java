@@ -1,4 +1,6 @@
 package study.mapper;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import study.model.Embedding;
 
@@ -8,5 +10,5 @@ public interface ApiEmbeddingMapper {
     void insertEmbedding(String content, double[] embedding);
 
     //検索したEmbeddingを返す
-    Embedding searchSimilar(double[] queryVector, int limit);
+    List<Embedding> searchSimilar(double[] queryVector, int limit);
 }
