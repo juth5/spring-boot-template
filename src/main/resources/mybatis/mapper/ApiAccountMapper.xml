@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="study.mapper.AccountMapper">
+
+  <!-- レコードを1件追加 -->
+  <insert id="Account">
+    INSERT INTO sample1.account DEFAULT VALUES
+  </insert>
+
+
+  <!-- useGeneratedKeys="true" keyProperty="id"は、insertした後にそのIDをAccountに入れるやつ -->
+  <insert id="insertAccount" parameterType="study.model.Account" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO sample1.account (username, password, role, created_at)
+    VALUES (#{username}, #{password}, #{role}, NOW());
+  </insert>
+
+
+
+
+</mapper>

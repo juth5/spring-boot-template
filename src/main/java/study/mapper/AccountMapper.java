@@ -1,5 +1,9 @@
 package study.mapper;
 
-public class AccountMapper {
-  
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface AccountMapper {
+    //レコードを1件追加
+    void insertAccount();
 }
