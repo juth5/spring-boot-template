@@ -8,4 +8,6 @@ import study.model.Account;
 public interface AccountMapper {
     //レコードを1件追加
     void insertAccount(Account account);
+    //ユーザー名から取得
+    Account findByUsername(String username);
 }

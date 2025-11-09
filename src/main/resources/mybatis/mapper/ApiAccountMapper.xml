@@ -18,6 +18,19 @@
   </insert>
 
 
+  <select id="findByUsername" parameterType="string" resultType="study.model.Account">
+    SELECT 
+        id,
+        username,
+        password,
+        role
+    FROM sample1.account
+    WHERE username = #{username}
+    LIMIT 1;
+  </select>
+
+
+
 
 
 </mapper>

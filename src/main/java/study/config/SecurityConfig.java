@@ -30,6 +30,7 @@ public class SecurityConfig {
           .csrf(csrf -> csrf.disable()) // ← API では必須
           .authorizeHttpRequests(auth -> auth
               .requestMatchers("/api/account/create").permitAll()
+              .requestMatchers("/api/account/logIn").permitAll() // ← これが必要！
               .anyRequest().authenticated()
           )
           .formLogin(form -> form.permitAll());
