@@ -1,5 +1,8 @@
 package study.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +49,13 @@ public class AccountService {
         return new LoginResponse(token, user.getUsername());
     }
 
+    public List<Account> getAccounts() {
+        List<Account> accounts = new ArrayList<Account>();
+        return accounts;
+    };
 
 
 }
+
+
+

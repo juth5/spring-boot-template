@@ -1,5 +1,8 @@
 package study.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -7,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import study.dto.request.AccountCreateRequest;
 import study.dto.response.LoginResponse;
+import study.model.Account;
 import study.service.AccountService;
 
 @RestController
@@ -28,9 +32,13 @@ public class ApiAccountRestController {
   @PostMapping("/logIn")
   public LoginResponse logIn(@RequestBody AccountCreateRequest request) {
     LoginResponse response = accountService.logIn(request.getUsername(), request.getPassword());
-
-
     return response;
+  }
+
+  @GetMapping("/list")
+  public List<Account> getAccounts() {
+    List<Account> accounts = accountService.getAccounts();
+    return accounts;
   }
 
 
