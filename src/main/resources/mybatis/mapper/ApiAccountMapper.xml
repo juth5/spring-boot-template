@@ -29,6 +29,14 @@
     LIMIT 1;
   </select>
 
+  <select id="getAccounts" resultType="study.model.Account">
+    SELECT 
+        id,
+        username,
+        password,
+        role
+    FROM sample1.account;
+  </select>
 
 
 

@@ -51,6 +51,7 @@ public class AccountService {
 
     public List<Account> getAccounts() {
         List<Account> accounts = new ArrayList<Account>();
+        accounts = accountMapper.getAccounts();
         return accounts;
     };
 
