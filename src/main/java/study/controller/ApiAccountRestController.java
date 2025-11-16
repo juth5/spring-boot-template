@@ -2,6 +2,7 @@ package study.controller;
 
 import java.util.List;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import study.dto.request.AccountCreateRequest;
 import study.dto.response.LoginResponse;
 import study.model.Account;
+import study.security.UserPrincipal;
 import study.service.AccountService;
 
 @RestController
@@ -41,7 +43,9 @@ public class ApiAccountRestController {
     return accounts;
   }
 
-
-
-  
+  @GetMapping("/me")
+  public Account me(@AuthenticationPrincipal UserPrincipal user) {
+    Account account = accountService.findByUserId(user.getUserId());
+    return account;
+  }
 }

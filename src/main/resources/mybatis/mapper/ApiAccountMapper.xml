@@ -17,7 +17,6 @@
     VALUES (#{username}, #{password}, #{role}, NOW());
   </insert>
 
-
   <select id="findByUsername" parameterType="string" resultType="study.model.Account">
     SELECT 
         id,
@@ -38,6 +37,15 @@
     FROM sample1.account;
   </select>
 
+  <select id="findByUserId" parameterType="Long" resultType="study.model.Account">
+    SELECT 
+        id,
+        username,
+        role
+    FROM sample1.account
+    WHERE id = #{userId}
+    LIMIT 1;
+  </select>
 
 
 

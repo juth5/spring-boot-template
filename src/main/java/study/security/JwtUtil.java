@@ -19,12 +19,14 @@ public class JwtUtil {
     private final long EXPIRATION = 1000 * 60 * 60 * 24;
 
     // ✅ JWTを作成して返す
-    public String generateToken(String username) {
+    public String generateToken(Long userId, String username, String role) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + EXPIRATION);
 
         return Jwts.builder()
                 .setSubject(username)
+                .claim("userId", userId)   // 追加
+                .claim("role", role)       // 追加
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(key)       // 署名
@@ -39,6 +41,24 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    public Long extractUserId(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("userId", Long.class);
+    }
+
+    public String extractRole(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("role", String.class);
     }
 
     // ✅ token が正しいかチェック

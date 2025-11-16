@@ -44,7 +44,7 @@ public class AccountService {
             throw new RuntimeException("パスワードが違います");
         }
         // ✅ ③ JWT発行
-        String token = jwtUtil.generateToken(user.getUsername());
+        String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getRole());
         // ✅ ④ JSONで返す
         return new LoginResponse(token, user.getUsername());
     }
@@ -55,7 +55,10 @@ public class AccountService {
         return accounts;
     };
 
-
+    public Account findByUserId(Long userId) {
+        Account account = accountMapper.findByUserId(userId);
+        return account;
+    }
 }
 
 
