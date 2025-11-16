@@ -12,17 +12,22 @@ import org.springframework.web.bind.annotation.RestController;
 import study.dto.request.AccountCreateRequest;
 import study.dto.response.LoginResponse;
 import study.model.Account;
+import study.model.QaLog;
 import study.security.UserPrincipal;
 import study.service.AccountService;
+import study.service.QaLogService;
 
 @RestController
 @RequestMapping("/api/account")
 public class ApiAccountRestController {
 
   private final AccountService accountService;
+  private final QaLogService qaLogService;
 
-  public ApiAccountRestController(AccountService accountService) {
+  public ApiAccountRestController(AccountService accountService, QaLogService qaLogService) {
       this.accountService = accountService;
+      this.qaLogService = qaLogService;
+
   }
 
   @PostMapping("/create")
