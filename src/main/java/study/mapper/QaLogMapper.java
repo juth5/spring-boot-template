@@ -9,4 +9,7 @@ import study.model.QaLog;
 public interface QaLogMapper {
     //ユーザーidから取得
     List<QaLog> findByUserId(@Param("userId") Long userId);
+
+    //レコードを1件追加
+    int insertQaLog(QaLog qaLog);
 }
