@@ -11,10 +11,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Account {
+public class QaLog {
     private Long id;
-    private String username;
-    private String password;
-    private String role;
+    private Long userId;
+    private String question;
+    private String answer;
     private OffsetDateTime createdAt;
 }
