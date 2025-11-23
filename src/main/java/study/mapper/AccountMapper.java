@@ -1,5 +1,20 @@
 package study.mapper;
 
-public class AccountMapper {
-  
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import study.model.Account;
+
+@Mapper
+public interface AccountMapper {
+    //レコードを1件追加
+    void insertAccount(Account account);
+    //ユーザー名から取得
+    Account findByUsername(String username);
+    //ユーザーidから取得
+    Account findByUserId(@Param("userId") Long userId);
+    //全件取得
+    List<Account> getAccounts();
 }
