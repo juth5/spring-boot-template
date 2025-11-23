@@ -8,12 +8,8 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import study.mapper.ApiCallLogMapper;
 import study.mapper.ApiEmbeddingMapper;
-import study.mapper.QaLogMapper;
 import study.model.ChatRequestParameter;
 import study.model.Embedding;
-import study.model.QaLog;
-import study.security.UserPrincipal;
-
 import org.springframework.web.reactive.function.client.WebClient;
 import io.netty.resolver.DefaultAddressResolverGroup;
 import reactor.netty.http.client.HttpClient;
@@ -27,11 +23,9 @@ public class ChatGptService {
     private final WebClient webClient;
     private final ApiCallLogMapper apiCallLogMapper;
     private final ApiEmbeddingMapper apiEmbeddingMapper;
-    private final QaLogMapper qaLogMapper;
-
 
     //コンストラクタ
-    public ChatGptService(WebClient.Builder webClientBuilder, ApiCallLogMapper apiCallLogMapper, ApiEmbeddingMapper apiEmbeddingMapper, QaLogMapper qaLogMapper) {
+    public ChatGptService(WebClient.Builder webClientBuilder, ApiCallLogMapper apiCallLogMapper, ApiEmbeddingMapper apiEmbeddingMapper) {
         HttpClient httpClient = HttpClient.create()
         .resolver(DefaultAddressResolverGroup.INSTANCE); // ← これが重要！
 
@@ -42,11 +36,10 @@ public class ChatGptService {
         
         this.apiCallLogMapper = apiCallLogMapper;
         this.apiEmbeddingMapper = apiEmbeddingMapper;
-        this.qaLogMapper = qaLogMapper;
     }
 
     //chatGPTのAPIを叩く
-    public String callChatGpt(ChatRequestParameter param, UserPrincipal user) {
+    public String callChatGpt(ChatRequestParameter param) {
         //今日のAPIのコール数を取得
         Integer count = apiCallLogMapper.countToday();
         if (count >= 10) {
@@ -80,11 +73,6 @@ public class ChatGptService {
         param.setReferenceText(merged);
         String result = callApiChatGpt(param);
         apiCallLogMapper.insertCallLog();
-        QaLog qaLog = new QaLog();
-        qaLog.setAnswer(result);
-        qaLog.setQuestion(param.getQuestion());
-        qaLog.setUserId(user.getUserId());
-        qaLogMapper.insertQaLog(qaLog);
 
         return result;
     }
