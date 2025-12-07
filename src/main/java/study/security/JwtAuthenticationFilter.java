@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -36,6 +37,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             // "Bearer " を取り除く
             String token = authHeader.substring(7);
+            // token が "" or null → 認証せずスルー
+            if (token == null 
+                    || token.isBlank() 
+                    || token.equalsIgnoreCase("null") 
+                    || !token.contains(".")) {
+
+
+                System.out.println("トークンが不正です。");
+                throw new AuthenticationException("JWT invalid") {};
+
+                //response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "トークンが無効です。ログインし直してください。");
+                //return;
+            }
+
             // username を中から取得
             String username = jwtUtil.extractUsername(token);
             Long userId = jwtUtil.extractUserId(token);   // ← 追加
