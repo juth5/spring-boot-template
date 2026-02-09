@@ -12,4 +12,5 @@ public class ChatRequestParameter {
     private String model;
     private String question;
     private String referenceText;
+    private String umlType;
 }
