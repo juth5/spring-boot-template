@@ -89,6 +89,46 @@ public class ChatGptService {
         return result;
     }
 
+
+//chatGPTのAPIを叩く
+    public String callChatGptMermaid(ChatRequestParameter param) {
+        //今日のAPIのコール数を取得
+        // Integer count = apiCallLogMapper.countToday();
+        // if (count >= 10) {
+        //     System.out.println("今日の呼び出し回数が上限に達しました。");
+        //     return null;
+        // }
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("あなたはMermaid.jsの構文に精通したシニアエンジニアです。以下の指示を厳守してください。\n\n");
+        sb.append("【絶対遵守の文法ルール】\n");
+        // 1. database等の特殊キーワードによるエラーを回避
+        sb.append("1. 登場人物（要素）の定義は、すべて「participant」を使用してください。actorやdatabaseは、日本語ラベルと組み合わせると構文エラー(Syntax Error)の原因となるため使用禁止です。\n");
+        // 2. 日本語エイリアスの解釈ミスを防ぐ
+        sb.append("2. 日本語の表示名は、必ず半角のダブルクォーテーションで囲んで定義してください（例：participant DB as \"データベース\"）。\n");
+        // 3. 全角スペース・全角記号による自爆を防止
+        sb.append("3. カッコ()、スペース、記号はすべて「半角」を使用すること。全角文字はダブルクォーテーション内のラベル名以外では絶対に使用禁止です。\n");
+        // 4. 解析エラーの元となる行末のゴミを排除
+        sb.append("4. 各行の末尾に不要なスペース（半角・全角問わず）を一切入れないでください。行が終わったら直ちに改行してください。\n");
+        // 5. 出力形式の固定
+        sb.append("5. 出力は必ずマークダウンのコードブロック形式（```mermaid ～ ```）のみとし、解説、導入文、結びの言葉などは1文字も出力しないでください。\n\n");
+
+        sb.append("【対象図タイプ】\n").append(param.getUmlType()).append("\n\n");
+        
+        sb.append("【プロンプト内容（この内容をMermaid化してください）】\n");
+        sb.append(param.getQuestion()).append("\n\n");
+        
+        String merged = sb.toString();
+        param.setReferenceText(merged);
+
+        String result = callApiChatGpt(param);
+
+        return result;
+    }
+
+
+
     public String callApiChatGpt(ChatRequestParameter param) {
         try {
             JSONObject requestBody = new JSONObject()

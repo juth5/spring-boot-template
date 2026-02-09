@@ -16,10 +16,27 @@ public class ApiChatGptRestController {
     private ChatGptService chatGptService;
     @PostMapping
     public ServiceResponse<Map<String, String>> callChatGpt(@RequestBody ChatRequestParameter param, @AuthenticationPrincipal UserPrincipal user) {
-
-
         ServiceResponse<Map<String, String>> serviceResponse = new ServiceResponse<>();
         String response = chatGptService.callChatGpt(param, user);
+
+        if (response == null) {
+            serviceResponse.setSuccess(false);
+            serviceResponse.setMessage("失敗しました。");
+        } else {
+            Map<String, String> data = new HashMap<>();
+            data.put("answer", response);
+            serviceResponse.setSuccess(true);
+            serviceResponse.setMessage("回答を生成しました。");
+            serviceResponse.setData(data);
+        }
+        return serviceResponse;
+    }
+
+    @PostMapping("/mermaid")
+    public ServiceResponse<Map<String, String>> callChatGptMermaid(@RequestBody ChatRequestParameter param, @AuthenticationPrincipal UserPrincipal user) {
+        ServiceResponse<Map<String, String>> serviceResponse = new ServiceResponse<>();
+
+        String response = chatGptService.callChatGptMermaid(param);
 
         if (response == null) {
             serviceResponse.setSuccess(false);
