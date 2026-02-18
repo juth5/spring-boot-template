@@ -42,39 +42,46 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     || token.isBlank() 
                     || token.equalsIgnoreCase("null") 
                     || !token.contains(".")) {
-
-
                 System.out.println("トークンが不正です。");
                 throw new AuthenticationException("JWT invalid") {};
-
-                //response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "トークンが無効です。ログインし直してください。");
-                //return;
             }
 
-            // username を中から取得
-            String username = jwtUtil.extractUsername(token);
-            Long userId = jwtUtil.extractUserId(token);   // ← 追加
-            String role = jwtUtil.extractRole(token);     // ← 追加
+            String username = null;
+            Long userId = null;
+            String role = null;
 
-            UserPrincipal principal = new UserPrincipal(
-                    userId,
-                    username,
-                    role
-            );
-            // token が有効な場合
-            if (username != null && jwtUtil.validateToken(token)) {
-                UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(
-                                principal,
-                                null, // ← principal に userId を入れると便利
-                                List.of(new SimpleGrantedAuthority(role))
-                        );
-                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                // ✅ Spring Security に「この人は認証済み」と伝える
-                SecurityContextHolder.getContext().setAuthentication(auth);
+            try {
+                // 1. ここで解析（期限切れなら例外が発生して catch へ飛ぶ）
+                username = jwtUtil.extractUsername(token);
+                userId = jwtUtil.extractUserId(token);
+                role = jwtUtil.extractRole(token);
+
+                // 2. 解析に成功し、さらに有効な場合のみ「認証済み」にする
+                if (username != null && jwtUtil.validateToken(token)) {
+                    UserPrincipal principal = new UserPrincipal(
+                            userId,
+                            username,
+                            role
+                    );
+
+                    UsernamePasswordAuthenticationToken auth =
+                            new UsernamePasswordAuthenticationToken(
+                                    principal,
+                                    null,
+                                    List.of(new SimpleGrantedAuthority(role))
+                            );
+                    auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    
+                    // ✅ ここでセットされると「ログイン済み」になる
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
+            }
+            catch (Exception e) {
+                // 🔥 ポイント：ここをログ出力だけにして、throw しない！
+                System.out.println("JWTの検証に失敗（期限切れ等）: " + e.getMessage());
+                // 何もしない（SecurityContextHolder にセットしない）まま catch を抜ける
             }
         }
-
         // 次のフィルターへ
         filterChain.doFilter(request, response);
     }

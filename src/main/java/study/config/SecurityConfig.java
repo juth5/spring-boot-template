@@ -14,11 +14,11 @@ import study.security.JwtAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
-  private final JwtAuthenticationFilter jwtFilter;
+    private final JwtAuthenticationFilter jwtFilter;
 
-  public SecurityConfig(JwtAuthenticationFilter jwtFilter) {
-      this.jwtFilter = jwtFilter;
-  }
+    public SecurityConfig(JwtAuthenticationFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
+    }
 
 
     // @Bean
@@ -33,32 +33,33 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-      http
+        http
           .csrf(csrf -> csrf.disable()) // ← API では必須
-          .authorizeHttpRequests(auth -> auth
-              .requestMatchers("/api/account/create").permitAll()
-              .requestMatchers("/api/account/logIn").permitAll()
-              .anyRequest().authenticated()
-          )
-          //UsernamePasswordAuthenticationFilter より前に JWT をチェックするフィルターを差し込め
-          .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-          //セッションをつくらない設定
-          .sessionManagement(session -> 
-            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-          )
-          .exceptionHandling(ex ->
-              ex.authenticationEntryPoint((req, res, e) -> {
-                  // 🔥 JWTが無い / 無効ならここ
-                  res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                  res.setContentType("application/json;charset=UTF-8");
-                  res.getWriter().write("""
-                      { "message": "ログインが必要です", "isLogin": false }
-                  """);
-              })
-          )
+            .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/api/account/create").permitAll()
+            .requestMatchers("/api/account/logIn").permitAll()
+            .anyRequest().authenticated()
+        )
+            //UsernamePasswordAuthenticationFilter より前に JWT をチェックするフィルターを差し込め
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            //セッションをつくらない設定
+            .sessionManagement(session -> 
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .exceptionHandling(ex ->
+                ex.authenticationEntryPoint((req, res, e) -> {
+                    System.out.println("Unauthorized error: " + e.getMessage());
+                    // 🔥 JWTが無い / 無効ならここ
+                    res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    res.setContentType("application/json;charset=UTF-8");
+                    res.getWriter().write("""
+                    { "message": "ログインが必要です", "isLogin": false }
+                    """);
+                    res.getWriter().flush();
+                })
+            )
           .formLogin(form -> form.disable()); // ← REST API は formLogin 無効にする
-          
-      return http.build();
+        return http.build();
     }
     
     @Bean
