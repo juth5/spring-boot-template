@@ -14,8 +14,10 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // すべてのAPIパスに適用
-                        .allowedOrigins("https://ai-110mh.vercel.app/")
+                        // .allowedOrigins("https://ai-110mh.vercel.app/")
                         // .allowedOrigins("http://localhost:3000")
+                        .allowedOrigins("https://mermaid-front-end.vercel.app/")
+
 
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*") // ヘッダーも自由に
