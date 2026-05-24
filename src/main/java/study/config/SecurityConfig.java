@@ -38,6 +38,7 @@ public class SecurityConfig {
           .authorizeHttpRequests(auth -> auth
               .requestMatchers("/api/account/create").permitAll()
               .requestMatchers("/api/account/logIn").permitAll()
+              .requestMatchers("/api/account/list").hasAuthority("ADMIN")
               .anyRequest().authenticated()
           )
           //UsernamePasswordAuthenticationFilter より前に JWT をチェックするフィルターを差し込め

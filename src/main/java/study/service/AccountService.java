@@ -1,18 +1,22 @@
 package study.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import study.dto.response.AccountResponse;
 import study.dto.response.LoginResponse;
+import study.exception.DuplicateUsernameException;
+import study.exception.InvalidCredentialsException;
+import study.exception.UserNotFoundException;
 import study.mapper.AccountMapper;
 import study.model.Account;
 import study.security.JwtUtil;
 
 @Service
 public class AccountService {
+
     private final AccountMapper accountMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
@@ -24,42 +28,39 @@ public class AccountService {
     }
 
     public void createAccount(String username, String rawPassword) {
-        String encoded = passwordEncoder.encode(rawPassword);
+        if (accountMapper.findByUsername(username) != null) {
+            throw new DuplicateUsernameException(username);
+        }
         Account acc = new Account();
         acc.setUsername(username);
-        acc.setPassword(encoded);
+        acc.setPassword(passwordEncoder.encode(rawPassword));
         acc.setRole("USER");
-
         accountMapper.insertAccount(acc);
     }
 
     public LoginResponse logIn(String username, String rawPassword) {
-        // ✅ ① DBからユーザー取得
         Account user = accountMapper.findByUsername(username);
         if (user == null) {
-            throw new RuntimeException("ユーザーが存在しません");
+            throw new UserNotFoundException(username);
         }
-        // ✅ ② パスワード照合
         if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
-            throw new RuntimeException("パスワードが違います");
+            throw new InvalidCredentialsException();
         }
-        // ✅ ③ JWT発行
         String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getRole());
-        // ✅ ④ JSONで返す
         return new LoginResponse(token, user.getUsername());
     }
 
-    public List<Account> getAccounts() {
-        List<Account> accounts = new ArrayList<Account>();
-        accounts = accountMapper.getAccounts();
-        return accounts;
-    };
+    public List<AccountResponse> getAccounts() {
+        return accountMapper.getAccounts().stream()
+                .map(a -> new AccountResponse(a.getId(), a.getUsername(), a.getRole(), a.getCreatedAt()))
+                .toList();
+    }
 
-    public Account findByUserId(Long userId) {
-        Account account = accountMapper.findByUserId(userId);
-        return account;
+    public AccountResponse findByUserId(Long userId) {
+        Account a = accountMapper.findByUserId(userId);
+        if (a == null) {
+            throw new UserNotFoundException("id=" + userId);
+        }
+        return new AccountResponse(a.getId(), a.getUsername(), a.getRole(), a.getCreatedAt());
     }
 }
-
-
-

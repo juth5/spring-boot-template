@@ -9,48 +9,43 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+
 import study.dto.request.AccountCreateRequest;
+import study.dto.request.LoginRequest;
+import study.dto.response.AccountResponse;
 import study.dto.response.LoginResponse;
-import study.model.Account;
-import study.model.QaLog;
 import study.security.UserPrincipal;
 import study.service.AccountService;
-import study.service.QaLogService;
 
 @RestController
 @RequestMapping("/api/account")
 public class ApiAccountRestController {
 
-  private final AccountService accountService;
-  private final QaLogService qaLogService;
+    private final AccountService accountService;
 
-  public ApiAccountRestController(AccountService accountService, QaLogService qaLogService) {
-      this.accountService = accountService;
-      this.qaLogService = qaLogService;
+    public ApiAccountRestController(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
-  }
+    @PostMapping("/create")
+    public String accountCreate(@Valid @RequestBody AccountCreateRequest request) {
+        accountService.createAccount(request.getUsername(), request.getPassword());
+        return "created";
+    }
 
-  @PostMapping("/create")
-  public String accountCreate(@RequestBody AccountCreateRequest request) {
-    accountService.createAccount(request.getUsername(), request.getPassword());
-    return "created";
-  }
+    @PostMapping("/logIn")
+    public LoginResponse logIn(@Valid @RequestBody LoginRequest request) {
+        return accountService.logIn(request.getUsername(), request.getPassword());
+    }
 
-  @PostMapping("/logIn")
-  public LoginResponse logIn(@RequestBody AccountCreateRequest request) {
-    LoginResponse response = accountService.logIn(request.getUsername(), request.getPassword());
-    return response;
-  }
+    @GetMapping("/list")
+    public List<AccountResponse> getAccounts() {
+        return accountService.getAccounts();
+    }
 
-  @GetMapping("/list")
-  public List<Account> getAccounts() {
-    List<Account> accounts = accountService.getAccounts();
-    return accounts;
-  }
-
-  @GetMapping("/me")
-  public Account me(@AuthenticationPrincipal UserPrincipal user) {
-    Account account = accountService.findByUserId(user.getUserId());
-    return account;
-  }
+    @GetMapping("/me")
+    public AccountResponse me(@AuthenticationPrincipal UserPrincipal user) {
+        return accountService.findByUserId(user.getUserId());
+    }
 }
