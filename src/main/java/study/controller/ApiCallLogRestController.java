@@ -1,42 +1,37 @@
 package study.controller;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import study.mapper.ApiCallLogMapper;
-import study.model.ApiCallLog;
 
 import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import study.mapper.ApiCallLogMapper;
+import study.model.ApiCallLog;
 
 @RestController
 @RequestMapping("/api/calllogs")
 public class ApiCallLogRestController {
 
-    @Autowired
-    private ApiCallLogMapper apiCallLogMapper;
+    private final ApiCallLogMapper apiCallLogMapper;
 
-    // 全件取得（GET /api/calllogs）
+    public ApiCallLogRestController(ApiCallLogMapper apiCallLogMapper) {
+        this.apiCallLogMapper = apiCallLogMapper;
+    }
+
     @GetMapping
     public List<ApiCallLog> findAll() {
         return apiCallLogMapper.findAll();
     }
 
-    // 単一取得（GET /api/calllogs/{id}）
     @GetMapping("/{id}")
     public ApiCallLog findById(@PathVariable("id") Long id) {
         return apiCallLogMapper.findById(id);
     }
 
-    // 今日の呼び出し回数を取得
     @GetMapping("/count/today")
     public Integer countToday() {
         return apiCallLogMapper.countToday();
     }
-
-    
-
-    // 新規登録（POST /api/calllogs）
-    // @PostMapping
-    // public void insert(@RequestBody ApiCallLog log) {
-    //     apiCallLogMapper.insert(log);
-    // }
 }
-
